@@ -34,8 +34,8 @@ Este documente define los límites técnicos, las reglas de diseño y todas aque
 | R-03  | Las constantes de configuración se leen desde variables de entorno. |
 | R-04  | Los nombres de variables y funciones están en **snake_case** en español o inglés, consistentemente por módulo. |
 | R-05  | Cada módulo tiene al menos un test unitario antes de considerarse "completo". |
-| R-06  | Cada módulo tiene al menos un test unitario antes de considerarse "completo". |
-| R-07  | Cada módulo tiene al menos un test unitario antes de considerarse "completo". |
+| R-06  | Idioma (Código: Inglés / Comentarios: Español).  |
+| R-07  | Nomenclatura en código: snake_case, PascalCase y SCREAMING_SNAKE_CASE. |
 
 ---
 
