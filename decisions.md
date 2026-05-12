@@ -1,14 +1,14 @@
 ---
-title: "Agenda básica CLI con Python"
+title: "Gestión de furgonetas eléctricas CLI con Python"
 version: "0.1"
-date: "04/05/2026"
+date: "12/05/2026"
 ---
 # decisions.md — Registro de Decisiones de Diseño
 Este documento registra las decisiones técnicas y de diseño significativas tomadas durante el desarrollo de la aplicación de agenda de contactos. Cada entrada sigue el formato ADR (Architecture Decision Record).
 ---
 
 ## ADR-001: Elección de base de datos — MySQL
-**Fecha:** 2026-04-05  
+**Fecha:** 2026-05-12
 
 **Estado:** Aceptado
 
@@ -37,7 +37,7 @@ Se elige **MySQL 8.0**.
 
 ## ADR-002: Interfaz de usuario — CLI interactiva
 
-**Fecha:** 2026-04-27  
+**Fecha:** 2026-05-12  
 
 **Estado:** Aceptado
 
@@ -67,13 +67,11 @@ Se implementa una **CLI interactiva** (menús en bucle).
 
 ## ADR-003: Librería de conexión a MySQL — `mysql-connector-python`
 
-**Fecha:** 2026-04-27  
+**Fecha:** 2026-05-12 
 **Estado:** Aceptado
 
 **Opciones consideradas:**
 - `mysql-connector-python` (oficial Oracle)
-- `PyMySQL` (puro Python, sin compilación)
-- `SQLAlchemy` (ORM completo)
 
 **Decisión:**  
 Se usa **`mysql-connector-python`**.
@@ -87,14 +85,12 @@ Se usa **`mysql-connector-python`**.
 **Consecuencias:**
 - Las consultas SQL son explícitas en el código (ventaja para legibilidad en un
   proyecto educativo).
-- Si se desea añadir soporte multi-DB en el futuro, habría que refactorizar hacia
-  SQLAlchemy o un patrón Repository más abstracto.
 
 ---
 
 ## ADR-004: Estrategia de borrado — Soft Delete
 
-**Fecha:** 2026-04-27  
+**Fecha:** 2026-05-12  
 **Estado:** Aceptado
 
 **Contexto:**  
@@ -150,9 +146,9 @@ deben estar disponibles en tiempo de ejecución sin hardcodearlas en el código.
 ```
 DB_HOST=localhost
 DB_PORT=3306
-DB_NAME=agenda_db
-DB_USER=agenda_user
-DB_PASSWORD=tu_contraseña_segura
+DB_NAME=EcoRoute_db
+DB_USER=EcoRoute_user
+DB_PASSWORD=zxASqw!"
 ```
 
 ---
