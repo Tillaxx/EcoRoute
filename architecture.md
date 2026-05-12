@@ -6,7 +6,7 @@ date: "04/05/2026"
 # architecture.md - Arquitectura técnica #
 
 ## 1. Visión general
-La aplicación sigue una **arquitectura en capas** (Layered Architecture) para separar la lógica de presentación de la persistencia de datos con tres niveles bien diferenciados. La comunicación entre capas es siempre descendente: la capa superior llama a la inferior; nunca al revés.
+La aplicación sigue una **arquitectura en capas**, separando la lógica de presentación de la persistencia de datos en tres niveles distintos, la comunicación que ocurre entre dichas capas es descencente.
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -64,8 +64,7 @@ agenda_contactos/
 
 ## 3. Descripción de módulos
 ### 3.1 `main.py`
-Punto de entrada. Inicializa la conexión a la base de datos, instancia los
-componentes de las capas y lanza el bucle principal del menú CLI.
+Punto de entrada. Inicia la conexión con la base de datos y lanza el bucle principal del menú.
 ### 3.2 `cli/menu.py`
 Controla el flujo de navegación de la interfaz de usuario.
 **Funciones principales:**
@@ -76,13 +75,13 @@ Controla el flujo de navegación de la interfaz de usuario.
 | `menu_listar()`      | Muestra lista paginada                           |
 | `menu_buscar()`      | Solicita término y muestra resultados            |
 | `menu_ver()`         | Muestra detalle de una furgoneta y/o entrega y/o rutas por ID          |
-| `menu_asignar()`      | Submenú para asignar entrega a furgoneta creando rutas                |
-| `menu_desvincular()`      | Submenú para desvincular entrega de furgoneta  eliminando rutas   |
+| `menu_asignar()`     | Submenú para asignar entrega a furgoneta creando rutas                |
+| `menu_desvincular()` | Submenú para desvincular entrega de furgoneta  eliminando rutas   |
 | `menu_eliminar()`    | Solicita confirmación y elimina                  |
 
  ---
 ### 3.3 `cli/formatters.py`
-Funciones de presentación puras (sin lógica de negocio).
+Funciones de presentación.
 | Función                       | Descripción                              |
 |-------------------------------|------------------------------------------|
 | `tabla_furgonetas(furgoneta)`  | Renderiza lista con `tabulate`           |
