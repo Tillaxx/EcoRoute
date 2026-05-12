@@ -1,21 +1,21 @@
 ---
-title: "Agenda básica CLI con Python"
+title:  "Gestión de furgonetas eléctricas CLI con Python"
 version: "0.1"
-date: "04/05/2026"
+date: "12/05/2026"
 ---
-# constitution.md — Agenda de Contactos
-Este documento establece los principios irrenunciables, las reglas de diseño y las restricciones éticas/técnicas que gobiernan el desarrollo y la operación de la aplicación de gestión de agenda de contactos. Todos los agentes, desarrolladores y decisiones de diseño deben cumplir este contrato.
+# constitution.md — Gestión de furgonetas eléctricas
+Este documento establece los principios irrenunciables, las reglas de diseño y las restricciones éticas/técnicas que gobiernan el desarrollo y la operación de la aplicación de gestión de furgonetas eléctricas. Todos los agentes, desarrolladores y decisiones de diseño deben cumplir este contrato.
 
 ## 1. Principios fundamentales
 
 ### 1.1 Privacidad por diseño
-- Los datos de contacto son información personal. El sistema **no** los enviará a   servicios externos ni los registrará en logs sin cifrado.
+- Los datos de las furgonetas son información personal. El sistema **no** los enviará a servicios externos ni los registrará en logs sin cifrado.
 - El acceso a la base de datos requiere autenticación; las credenciales nunca se  almacenan en el código fuente ni en el control de versiones.
 
 ### 1.2 Integridad de datos
 - Toda escritura en base de datos se realiza mediante sentencias parametrizadas   (prepared statements). 
-- Antes de insertar o actualizar un contacto, el `logic_agent` valida todos los   campos obligatorios.
-- Las eliminaciones son **soft-delete** por defecto (campo `deleted_at`), preservando   el historial de datos.
+- Antes de insertar o actualizar información sobre furgonetas el `logic_agent` valida todos los campos obligatorios.
+- Las eliminaciones son **soft-delete** por defecto (campo `deleted_at`), preservando el historial de datos.
 
 ### 1.3 Separación de responsabilidades
 - Ningún agente asume responsabilidades de otro (ver `agents.md`).
@@ -42,7 +42,7 @@ Este documento establece los principios irrenunciables, las reglas de diseño y 
 
 - **SQL Injection:** Uso obligatorio de parámetros en todas las consultas.
 - **Credenciales:** Cargadas desde `.env` (excluido de `.gitignore`). Nunca en código.
-- **Permisos MySQL:** El usuario de la aplicación solo tiene `SELECT, INSERT, UPDATE, DELETE` sobre el esquema `agenda_db`. **No** tiene `DROP`, `CREATE` ni `GRANT`.
+- **Permisos MySQL:** El usuario de la aplicación solo tiene `SELECT, INSERT, UPDATE, DELETE` sobre el esquema `EcoRoute_db`. **No** tiene `DROP`, `CREATE` ni `GRANT`.
 - **Contraseñas de usuarios (futuro):** Si se añade autenticación, se usará `bcrypt`con coste mínimo 12. Nunca MD5 ni SHA-1.
 
 ---
@@ -66,7 +66,7 @@ Este documento establece los principios irrenunciables, las reglas de diseño y 
 
 ## 6. Ciclo de vida de cambios
 
-1. Cualquier cambio que contradiga este documento requiere una PR con justificación    explícita y aprobación de al menos un revisor humano.
+1. Cualquier cambio que contradiga este documento requiere una PR con justificación explícita y aprobación de al menos un revisor humano.
 2. Los cambios de esquema de base de datos se documentan en `migrations/` con    timestamp y descripción.
 3. Los cambios de arquitectura se registran en `decisions.md` antes de implementarse.
 
