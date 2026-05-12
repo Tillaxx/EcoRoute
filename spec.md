@@ -136,7 +136,7 @@ Tabla ruta en base de datos MySQL
 ## 5. Reglas de validación
 
 | Campo | Regla |
-|-------|------|-------------|-------------|
+|-------|------|
 | id_vehiculo  | No vacío, numerico. |
 | matricula |  No vacío, 4 numeros y consecutivamente 3 letras |
 | modelo |  No vacío, texto de entr 10-200 carácteres| 
@@ -146,14 +146,14 @@ Tabla ruta en base de datos MySQL
 | estado  | Deberá de tener uno de estos valores (Disponible, En Ruta, Cargando, Mantenimiento) | 
 
 | Campo | Regla |
-|-------|------|-------------|-------------|
+|-------|------|
 | id_entrega  | No vacío, numerico. |
 | destino_coordenadas | No vacío, que siga el formato de coordenadas |
 | prioridad  | No vacío, numérico y un numero del 1 al 3 |
-| ventana_horaria  | No vacío y que sea siga el patron XX:XX-YY:YY |
+| ventana_horaria  | No vacío y que sea siga el patron XX:XX-ZZ:ZZ |
 
 | Campo | Regla |
-|-------|------|-------------|-------------|
+|-------|------|
 | id_ruta   | No vacío, numerico. |
 | vehiculo_asignado  | No vacío, numerico |
 | lista_entregas   | En formato de lista |
