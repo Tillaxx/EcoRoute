@@ -72,12 +72,12 @@ Controla el flujo de navegación de la interfaz de usuario.
 | Función              | Descripción                                      |
 |----------------------|--------------------------------------------------|
 | `run()`              | Bucle principal del menú                         |
-| `menu_anadir()`      | Submenú de creación de furgoneta y/o entregas    |
+| `menu_anadir()`      | Submenú de creación de furgoneta y/o entregas y/o rutas     |
 | `menu_listar()`      | Muestra lista paginada                           |
 | `menu_buscar()`      | Solicita término y muestra resultados            |
-| `menu_ver()`         | Muestra detalle de una furgoneta y/o entrega por ID          |
-| `menu_asignar()`      | Submenú para asignar entrega a furgoneta                 |
-| `menu_desvincular()`      | Submenú para desvincular entrega de furgoneta                |
+| `menu_ver()`         | Muestra detalle de una furgoneta y/o entrega y/o rutas por ID          |
+| `menu_asignar()`      | Submenú para asignar entrega a furgoneta creando rutas                |
+| `menu_desvincular()`      | Submenú para desvincular entrega de furgoneta  eliminando rutas   |
 | `menu_eliminar()`    | Solicita confirmación y elimina                  |
 
  ---
@@ -87,8 +87,10 @@ Funciones de presentación puras (sin lógica de negocio).
 |-------------------------------|------------------------------------------|
 | `tabla_furgonetas(furgoneta)`  | Renderiza lista con `tabulate`           |
 | `detalle_furgonetas(furgoneta)`  | Muestra todos los campos de uno          |
+| `tabla_entregas(entrega)`  | Renderiza lista con `tabulate`           |
 | `detalle_entregas(entrega)`  | Muestra todos los campos de uno          |
-| `detalle_entregas(entrega)`  | Muestra todos los campos de uno          |
+| `tabla_entregas(ruta)`  | Renderiza lista con `tabulate`          |
+| `detalle_entregas(ruta)`  | Muestra todos los campos de uno          |
 | `mensaje_error(codigo, msg)`  | Formatea mensajes de error               |
 | `mensaje_exito(msg)`          | Formatea mensajes de confirmación        |
 
@@ -99,10 +101,26 @@ Define la estructura de datos del dominio.
 
 @dataclass
 class Furgoneta:
-    Matricula: str
-    Modelo: str
-    PorcentajeBateria: str
-    EntregasAsignadas: Optional[str] = None
+    id_vehiculo : numeric
+    modelo: str
+    capacidad_bateria_total : numeric
+    nivel_bateria_actual : numeric
+    autonomia_maxima_km  : numeric
+    estado : str
+
+class Entrega:
+    id_entrega : numeric
+    destino_coordenadas : str
+    peso_kg  : numeric
+    prioridad  : numeric
+    ventana_horaria : str
+
+class Ruta:
+    id_ruta  : numeric
+    vehiculo_asignado : numeric
+    lista_entregas  : array
+    distancia_total_estimada  : numeric
+    consumo_estimado_bateria   : numeric
 ```
 ---
 ### 3.5 `logic/validators.py`
@@ -137,7 +155,12 @@ Orquesta los casos de uso. Es el único punto de contacto entre CLI y repositori
 | `obtener_entrega(id: int)`         | CU-10            |
 | `actualizar_entrega(id, cambios)`  | CU-11            |
 | `eliminar_entrega(id: int)`        | CU-12            |
-| `vincular_ambos(id: int, id: int)`        | CU-12            |
+| `crear_ruta(datos: dict)`       | CU-13           |
+| `listar_ruta(pagina, tam)`     | CU-14          |
+| `buscar_ruta(termino: str)`    | CU-15            |
+| `obtener_ruta(id: int)`         | CU-16            |
+| `actualizar_ruta(id, cambios)`  | CU-17            |
+| `eliminar_ruta(id: int)`        | CU-18            |
 
 ---
 ### 3.7 `db/connection.py`
@@ -155,6 +178,7 @@ Repositorio de acceso a datos. Todas las consultas usan parámetros (`%s`).
 |-------------------------------------|--------------------------------------|
 | `insertar(furgoneta)`                | `INSERT INTO furgonetas ...`          |
 | `insertar(entrega)`                | `INSERT INTO entregas ...`          |
+| `insertar(ruta)`                | `INSERT INTO entregas ...`          |
 | `obtener_por_id(id)`               | `SELECT ... WHERE id=%s AND deleted_at IS NULL` |
 | `listar(offset, limit)`            | `SELECT ... WHERE deleted_at IS NULL LIMIT ...` |
 | `buscar(termino)`                  | `SELECT ... WHERE (nombre LIKE %s OR ...)` |
