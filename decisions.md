@@ -25,8 +25,6 @@ Se elige **MySQL 8.0**.
 
 **Justificación:**
 - Es el requisito explícito del proyecto.
-- Amplia documentación, soporte en hosting compartido y herramientas de administración
-  maduras (phpMyAdmin, MySQL Workbench).
 - Compatible con MariaDB, lo que facilita migraciones a entornos alternativos.
 
 **Consecuencias:**
@@ -46,22 +44,15 @@ La aplicación necesita una interfaz de usuario. Las opciones principales son CL
 
 **Opciones consideradas:**
 - CLI con menús interactivos
-- GUI con Tkinter
-- API REST + frontend web
 
 **Decisión:**  
 Se implementa una **CLI interactiva** (menús en bucle).
 
 **Justificación:**
 - Menor complejidad de implementación y mantenimiento.
-- No requiere dependencias adicionales de UI pesadas.
-- Se alinea con el objetivo de "aplicación simple".
-- Facilita el testing automatizado (entrada/salida estándar).
-
+ 
 **Consecuencias:**
 - La experiencia de usuario está limitada a terminal.
-- Si en v2.0 se desea GUI/Web, la separación en capas (CLI → lógica → DB) facilita
-  sustituir el `cli_agent` sin tocar la lógica de negocio.
 
 ---
 
@@ -78,9 +69,6 @@ Se usa **`mysql-connector-python`**.
 
 **Justificación:**
 - Driver oficial, mantenido activamente por Oracle.
-- API directa: conexión → cursor → execute → fetchall. Sin abstracción ORM que añada
-  complejidad innecesaria para una aplicación simple.
-- Soporte nativo para prepared statements parametrizados.
 
 **Consecuencias:**
 - Las consultas SQL son explícitas en el código (ventaja para legibilidad en un
@@ -106,15 +94,9 @@ Al eliminar un contacto, ¿se borra físicamente el registro o se marca como eli
 **Justificación:**
 - Permite recuperar contactos eliminados accidentalmente.
 - Conserva el historial de datos para auditoría.
-- El overhead de almacenamiento es insignificante para una agenda personal.
-- Las consultas de listado y búsqueda filtran `WHERE deleted_at IS NULL` de forma
-  transparente.
 
 **Consecuencias:**
 - Todas las consultas de lectura deben incluir el filtro `deleted_at IS NULL`.
-- Si en el futuro se desea implementar "papelera de reciclaje", la base ya está puesta.
-- La función "vaciar agenda" realizará un hard delete solo con confirmación explícita
-  (se documenta en `SPEC.md`).
 
 ---
 
@@ -128,8 +110,6 @@ Las credenciales de MySQL (host, puerto, usuario, contraseña, nombre de base de
 deben estar disponibles en tiempo de ejecución sin hardcodearlas en el código.
 
 **Opciones consideradas:**
-- Archivo de configuración `config.ini`
-- Variables de entorno puras (sin archivo)
 - Archivo `.env` cargado con `python-dotenv`
 
 **Decisión:**  
@@ -137,10 +117,6 @@ deben estar disponibles en tiempo de ejecución sin hardcodearlas en el código.
 
 **Justificación:**
 - Estándar de facto en proyectos Python modernos.
-- El archivo `.env` se excluye del control de versiones (`.gitignore`).
-- Se incluye un `.env.example` con claves sin valores para documentar las variables
-  necesarias.
-- Compatible con entornos CI/CD que inyectan variables de entorno nativas.
 
 **Variables requeridas:**
 ```
@@ -159,22 +135,16 @@ DB_PASSWORD=zxASqw!"
 **Estado:** Aceptado
 
 **Opciones consideradas:**
-- Formateo manual con `str.ljust()`
 - Librería `tabulate`
-- Librería `rich`
 
 **Decisión:**  
 **`tabulate`** con formato `grid` o `simple`.
 
 **Justificación:**
 - Librería ligera y sin subdependencias relevantes.
-- API de una sola línea: `tabulate(rows, headers=..., tablefmt="grid")`.
-- `rich` es más potente pero excesivo para las necesidades actuales.
 
 **Consecuencias:**
 - Añadir `tabulate` a `requirements.txt`.
-- Si en el futuro se desea colorear la salida, se puede combinar con `colorama` o
-  migrar a `rich` de forma localizada en el `cli_agent`.
 
 ---
 
@@ -191,7 +161,6 @@ Presentación (cli_agent)  →  Lógica de negocio (logic_agent)  →  Datos (db
 ```
 
 **Justificación:**
-- Permite testear la lógica de negocio de forma aislada con mocks.
 - Facilita el reemplazo de cualquier capa sin afectar a las demás.
 - Consistente con los principios de `constitution.md`.
 
