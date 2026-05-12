@@ -4,13 +4,12 @@ version: "0.1"
 date: "12/05/2026"
 ---
 # constitution.md — Gestión de furgonetas eléctricas
-Este documento establece los principios irrenunciables, las reglas de diseño y las restricciones éticas/técnicas que gobiernan el desarrollo y la operación de la aplicación de gestión de furgonetas eléctricas. Todos los agentes, desarrolladores y decisiones de diseño deben cumplir este contrato.
+Este documente define los límites técnicos, las reglas de diseño y todas aquellas restricciones.
 
 ## 1. Principios fundamentales
 
 ### 1.1 Privacidad por diseño
-- Los datos de las furgonetas son información personal. El sistema **no** los enviará a servicios externos ni los registrará en logs sin cifrado.
-- El acceso a la base de datos requiere autenticación; las credenciales nunca se  almacenan en el código fuente ni en el control de versiones.
+- El acceso a la base de datos requiere autentificación mediante credenciales.
 
 ### 1.2 Integridad de datos
 - Toda escritura en base de datos se realiza mediante sentencias parametrizadas   (prepared statements). 
@@ -21,7 +20,7 @@ Este documento establece los principios irrenunciables, las reglas de diseño y 
 - Ningún agente asume responsabilidades de otro (ver `agents.md`).
 
 ### 1.4 Simplicidad sobre complejidad
-- Se prefieren soluciones simples y legibles frente a abstracciones prematuras.
+- Se prefieren soluciones que sean simples y legibles.
 - No se añadirán dependencias externas sin justificación documentada en `decisions.md`.
 
 ---
