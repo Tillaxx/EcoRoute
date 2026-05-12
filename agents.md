@@ -1,7 +1,7 @@
 ---
 title: "Gestion De furgonetas EcoRoute"
 version: "0.1"
-date: "11/05/2026"
+date: "12/05/2026"
 ---
 # agents.md — Gestion de furgonetas
 
