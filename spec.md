@@ -1,41 +1,61 @@
 ---
-title: "Agenda básica CLI con Python"
+title: "Gestión de furgonetas eléctricas CLI con Python"
 version: "0.1"
-date: "29/04/2026"
+date: "12/05/2026"
 ---
 # spec.md - Especificación funcional #
 ## 1. Descripción general 
-La aplicación es una herramienta de línea de comandos (CLI) escrita en lenguaje Python que permite gestionar una agenda de contactos almacenada en una base de datos MySQL. Ofreciendo operaciones propias de CRUD.
+La aplicación es una herramienta de línea de comandos (CLI) escrita en lenguaje Python que permite gestionar las furgonetas electricas y/o vincularla con entregas que seran tambien gestionadas, las furgonetas tendran batería que serán importantes almacenada en una base de datos MySQL. Ofreciendo operaciones propias de CRUD.
 
 ## 2. Funcionalidades
-- Crear, listar, actualizar y eliminar contactos.
-- Buscar contacto por nombre, por teléfono y por email
-- Listar todos los contactos
+- Crear, listar, actualizar y eliminar furgonetas y entregas.
+- Buscar furgonetas por matricula, por modelo y por entrega asignada
+- Listar todas las furgonetas
+- Listar todas las entregas
 - Crear un menú de opciones
 - CLI sea interactiva
 - Almacene información en una base de datos MySQL
 
 ## 3. Modelo de datos
 
-Tabla contacto en base de datos MySQL
+Tabla furgoneta en base de datos MySQL
 | Campo | Tipo | Obligatorio | Descripcion |
 |-------|------|-------------|-------------|
-| id | INT AUTOINCREMENT | SI | Identificador único |
-| name | VARCHAR(100) | SI | Nombre contacto |
-| surname | VARCHAR(200) | NO | Apellidos contacto |
-| tel1 | INTEGER | SI | Telefono contacto1 |
-| tel2 | INTEGER | NO | Telefono contacto2 |
-| email | VARCHAR(100) | NO | Email contacto |
-| notes | TEXT | NO | Informacion contacto |
+| id_vehiculo  | INT AUTOINCREMENT | SI | Identificador único |
+| matricula | VARCHAR(7) | SI | Matrícula furgoneta |
+| modelo | VARCHAR(200) | SI | Modelo furgoneta | 
+| capacidad_bateria_total  | INTEGER | SI | capacidad de batería total en Kwh|
+| nivel_bateria_actual  | INTEGER | SI | cantidad de batería | 
+| autonomia_maxima_km  | INTEGER | SI | autonomia en km| 
+| estado  | enum(Disponible, En Ruta, Cargando, Mantenimiento) | SI | cantidad de batería | 
+
+
+Tabla entrega en base de datos MySQL
+| Campo | Tipo | Obligatorio | Descripcion |
+|-------|------|-------------|-------------|
+| id_entrega  | INT AUTOINCREMENT | SI | Identificador único |
+| destino_coordenadas | VARCHAR(200) | SI | Ubicación entrega |
+| prioridad  | int| SI | prioridad del 1 al 3 |
+| ventana_horaria  | VARCHAR(200)| SI | duracion |
+
+
+Tabla ruta en base de datos MySQL
+| Campo | Tipo | Obligatorio | Descripcion |
+|-------|------|-------------|-------------|
+| id_ruta   | INT AUTOINCREMENT | SI | Identificador único |
+| vehiculo_asignado  | VARCHAR(200) | SI | id de vehiculo asignado |
+| lista_entregas   | list | SI | lista de entregas |
+| distancia_total_estimada   | Float| SI | distancia en Km |
+| consumo_estimado_bateria   | Float| SI | porcentaje |
 
 ## 4. Casos de uso
-### CU-01: Añadir contacto
-1. El usuario selecciona "Añdir contacto"
-2. El sistema pide: Nombre (name) surname, número (tel1), tel2, email, notes
+### CU-01: Añadir furgoneta
+1. El usuario selecciona "Añdir furgoneta"
+2. El sistema pide: matricula, modelo y campos bateria
 3. El usuario introduce los datos
 4. El sistema valida los datos
-5. El sistema comprueba si existe un contacto con el mismo telefono.
-6. El sistema inserta el conatcto en la base de datos y te muestra el id con los datos del contacto
+5. El sistema comprueba si existe una furgoneta con la misma matricula.
+6. El sistema inserta la furgoneta en la base de datos y te muestra el id con los datos de la furgoneta
 
 **Flujo alternativo A**  (validación falla)
    - El sistema muestra un mensaje de error y solicta corregir el error
@@ -43,65 +63,100 @@ Tabla contacto en base de datos MySQL
 **Flujo Alternativo B** (validacion correcta)
   - El sistema inserta los datos en la base de datos
 
-**Flujo Alternativo C** (contacto duplicado)
-   - El sistema nos advierte de que existe el contacto y pide confirmación de guardado
-   
-### CU-02: Ver contacto
-1. El usuario introduce el `id` del contacto (o lo selecciona de una lista).
-2. El sistema muestra todos los campos del contacto en formato legible.
+**Flujo Alternativo C** (furgoneta duplicado)
+   - El sistema nos advierte de que existe la furgoneta y pide confirmación de guardado
 
-### CU-03: Eliminar contacto
-1. El usuario selecciona "Eliminar contacto" e introduce el `id`.
-2. El sistema muestra los datos del contacto y solicita confirmación ("¿Seguro? [s/N]").
+### CU-02: Añadir entrega
+1. El usuario selecciona "Añdir entrega"
+2. El sistema pide: destino_coordenadas, prioridad y ventana_horaria
+3. El usuario introduce los datos
+4. El sistema valida los datos
+5. El sistema comprueba si existe una entrega igual.
+6. El sistema inserta la entrega en la base de datos y te muestra el id con los datos de la entrega
+
+**Flujo alternativo A**  (validación falla)
+   - El sistema muestra un mensaje de error y solicta corregir el error
+
+**Flujo Alternativo B** (validacion correcta)
+  - El sistema inserta los datos en la base de datos
+
+**Flujo Alternativo C** (entrega duplicado)
+   - El sistema nos advierte de que existe la furgoneta y pide confirmación de guardado
+   - 
+
+### CU-03: Añadir ruta
+1. El usuario selecciona "Añadir ruta"
+2. El sistema pide: vehiculo_asignado, lista_entregas , distancia_total_estimada y consumo_estimado_bateria
+3. El usuario introduce los datos
+4. El sistema valida los datos
+5. El sistema comprueba si existe una ruta igual.
+6. El sistema inserta la ruta en la base de datos y te muestra el id con los datos de la ruta
+
+**Flujo alternativo A**  (validación falla)
+   - El sistema muestra un mensaje de error y solicta corregir el error
+
+**Flujo Alternativo B** (validacion correcta)
+  - El sistema inserta los datos en la base de datos
+
+**Flujo Alternativo C** (entrega duplicado)
+   - El sistema nos advierte de que existe la furgoneta y pide confirmación de guardado
+   - 
+**Flujo Alternativo D** (entrega lejos)
+   - El sistema rechaza debido a que la entrega gastaría mas del 80% de la batería
+
+### CU-04: Ver furgoneta
+1. El usuario introduce el `id` de la furgoneta (o lo selecciona de una lista).
+2. El sistema muestra todos los campos de la furgoneta en formato legible.
+
+### CU-05: Ver entrega
+1. El usuario introduce el `id` de la entrega (o lo selecciona de una lista).
+2. El sistema muestra todos los campos de la entrega en formato legible.
+
+### CU-06: Eliminar entrada
+1. El usuario selecciona "Eliminar entrada", se le pide si es furgoneta, entrega o ruta e introduce el `id`.
+2. El sistema muestra los datos del objeto y solicita confirmación ("¿Seguro? [s/N]").
 3. Si el usuario confirma, el sistema realiza soft-delete (`deleted_at = NOW()`).
 4. El sistema confirma la eliminación.
 
-### CU-04: Editar contacto
-1. El usuario selecciona "Editar contacto" e introduce el `id`.
+### CU-07: Editar entrada
+1. El usuario selecciona "Editar entrada", se le pide si es furgoneta, entrega o ruta e introduce el `id`.
 2. El sistema muestra los valores actuales campo a campo.
 3. Para cada campo, el usuario puede introducir un nuevo valor o dejarlo vacío para
    mantener el actual.
 4. El sistema valida los nuevos valores.
 5. El sistema actualiza el registro y muestra confirmación.
   
-### CU-05: Listar contactos
-1. El usuario selecciona "Listar contactos".
-2. El sistema muestra todos los contactos activos (sin `deleted_at`) en formato tabla.
-3. Si hay más de 20 contactos, pagina de 20 en 20.
+### CU-08: Listar entrada
+1. El usuario selecciona "Listar entrada" y se le pide si es furgoneta, entrega o ruta.
+2. El sistema muestra todas las entradas (sin `deleted_at`) en formato tabla.
+3. Si hay más de 20 entradas, pagina de 20 en 20.
 4. El usuario puede navegar entre páginas o volver al menú.
 
 ---
 ## 5. Reglas de validación
-| Campo | Regla|
-|-------|------|
-| name | No vacío. Longitud 2–100 caracteres. Solo letras, espacios, guiones |
-| surname | No vacío. Longitud 2–200 caracteres. Solo letras, espacios, guiones |
-| tel1 | Formato: dígitos, espacios, `+`, `(`, `)`, `-`. Longitud 7–20 chars |
-| tel2 | Formato: dígitos, espacios, `+`, `(`, `)`, `-`. Longitud 7–20 chars |
-| email | Formato RFC 5322 básico: `usuario@dominio.tld` |
-| notes | Sin restricción de formato. Máximo 5 000 caracteres. |
 
-## 6. Requisitos no funcionales (opcional)
+| Campo | Regla |
+|-------|------|-------------|-------------|
+| id_vehiculo  | No vacío, numerico. |
+| matricula |  No vacío, 4 numeros y consecutivamente 3 letras |
+| modelo |  No vacío, texto de entr 10-200 carácteres| 
+| capacidad_bateria_total  |  No vacío, numérico para indicar KwH|
+| nivel_bateria_actual  |  No vacío, numérico para indicar porcentaje de 0 a 100| 
+| autonomia_maxima_km  | No vacío, numérico para indicar km | 
+| estado  | Deberá de tener uno de estos valores (Disponible, En Ruta, Cargando, Mantenimiento) | 
 
-| ID    | Requisito                                                              |
-|-------|------------------------------------------------------------------------|
-| RNF-01| El tiempo de respuesta de cualquier operación debe ser < 2 segundos.   |
-| RNF-02| La aplicación debe funcionar con Python 3.10+ y MySQL 8.0+.            |
-| RNF-03| El código debe tener cobertura de tests >= 80 % en módulos de lógica.  |
-| RNF-04| El esquema de base de datos debe incluir índices en campos de búsqueda.|
-| RNF-05| Los mensajes de error deben ser claros y en el idioma de la interfaz.  |
+| Campo | Regla |
+|-------|------|-------------|-------------|
+| id_entrega  | No vacío, numerico. |
+| destino_coordenadas | No vacío, que siga el formato de coordenadas |
+| prioridad  | No vacío, numérico y un numero del 1 al 3 |
+| ventana_horaria  | No vacío y que sea siga el patron XX:XX-YY:YY |
 
----
-
-## 7. Mensajes de error estándar (opcional)
-
-| Código  | Mensaje                                              |
-|---------|------------------------------------------------------|
-| ERR-001 | "El nombre es obligatorio."                          |
-| ERR-002 | "Debe indicar al menos un teléfono o un email."      |
-| ERR-003 | "El formato del email no es válido."                 |
-| ERR-004 | "El formato del teléfono no es válido."              |
-| ERR-005 | "No se encontró ningún contacto con ese ID."         |
-| ERR-006 | "Error de conexión a la base de datos."              |
-| ERR-007 | "Ya existe un contacto con ese teléfono o email."    |
+| Campo | Regla |
+|-------|------|-------------|-------------|
+| id_ruta   | No vacío, numerico. |
+| vehiculo_asignado  | No vacío, numerico |
+| lista_entregas   | En formato de lista |
+| distancia_total_estimada   | No vacío, numerico para medir distancia en Km |
+| consumo_estimado_bateria   | No vacío, numerico para medir el % que se va a consumir |
 
