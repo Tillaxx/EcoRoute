@@ -1,5 +1,5 @@
 ---
-title: "Agenda básica CLI con Python"
+title: "Gestión de furgonetas eléctricas CLI con Python"
 version: "0.1"
 date: "04/05/2026"
 ---
@@ -46,7 +46,7 @@ agenda_contactos/
 │
 ├── logic/                  # Capa de lógica de negocio
 │   ├── __init__.py
-│   ├── models.py           # Definición de la entidad `Contacto`.
+│   ├── models.py           # Definición de las entidades `Furgoneta` y `Entregas`.
 |   ├── services.py         # Orquesta los casos de uso. Es el único punto de contacto entre CLI y repositorio.
 │   └── validators.py       # Validación de campos
 │
@@ -72,11 +72,12 @@ Controla el flujo de navegación de la interfaz de usuario.
 | Función              | Descripción                                      |
 |----------------------|--------------------------------------------------|
 | `run()`              | Bucle principal del menú                         |
-| `menu_anadir()`      | Submenú de creación de contacto                  |
+| `menu_anadir()`      | Submenú de creación de furgoneta y/o entregas    |
 | `menu_listar()`      | Muestra lista paginada                           |
 | `menu_buscar()`      | Solicita término y muestra resultados            |
-| `menu_ver()`         | Muestra detalle de un contacto por ID            |
-| `menu_editar()`      | Submenú de edición campo a campo                 |
+| `menu_ver()`         | Muestra detalle de una furgoneta y/o entrega por ID          |
+| `menu_asignar()`      | Submenú para asignar entrega a furgoneta                 |
+| `menu_desvincular()`      | Submenú para desvincular entrega de furgoneta                |
 | `menu_eliminar()`    | Solicita confirmación y elimina                  |
 
  ---
@@ -84,8 +85,10 @@ Controla el flujo de navegación de la interfaz de usuario.
 Funciones de presentación puras (sin lógica de negocio).
 | Función                       | Descripción                              |
 |-------------------------------|------------------------------------------|
-| `tabla_contactos(contactos)`  | Renderiza lista con `tabulate`           |
-| `detalle_contacto(contacto)`  | Muestra todos los campos de uno          |
+| `tabla_furgonetas(furgoneta)`  | Renderiza lista con `tabulate`           |
+| `detalle_furgonetas(furgoneta)`  | Muestra todos los campos de uno          |
+| `detalle_entregas(entrega)`  | Muestra todos los campos de uno          |
+| `detalle_entregas(entrega)`  | Muestra todos los campos de uno          |
 | `mensaje_error(codigo, msg)`  | Formatea mensajes de error               |
 | `mensaje_exito(msg)`          | Formatea mensajes de confirmación        |
 
@@ -95,14 +98,11 @@ Define la estructura de datos del dominio.
 ```python
 
 @dataclass
-class Contacto:
-    nombre: str
-    apellidos: str
-    telefono1: Optional[str] = None
-    telefono2: Optional[str] = None
-    email: Optional[str] = None
-    notas: Optional[str] = None
-    id: Optional[int] = None
+class Furgoneta:
+    Matricula: str
+    Modelo: str
+    PorcentajeBateria: str
+    EntregasAsignadas: Optional[str] = None
 ```
 ---
 ### 3.5 `logic/validators.py`
@@ -112,10 +112,10 @@ Funciones de validación sin efectos secundarios. Devuelven `True` o lanzan `Val
 
 | Función                   | Regla aplicada                              |
 |---------------------------|---------------------------------------------|
-| `validar_nombre(nombre)`  | No vacío, 2–100 chars, caracteres permitidos|
-| `validar_telefono(tel)`   | Formato numérico con signos aceptados       |
-| `validar_email(email)`    | Formato básico usuario@dominio.tld          |
-| `validar_contacto(datos)` | Al menos teléfono o email presente          |
+| `validar_matrícula(nombre)`  | No vacío, 4 numeros y posteriormente 3 letras|
+| `validar_modelo(modelo)`   | No vacío, cadena de caracteres entre 5-150       |
+| `validar_porcentajebateria(bateria)`    | Numero de 0 a 100          |
+| `validar_entregasasignadas(entregas)` | lista de entregas referenciadas por id         |
 
 ---
 ### 3.6 `logic/servicse.py`
@@ -125,12 +125,19 @@ Orquesta los casos de uso. Es el único punto de contacto entre CLI y repositori
 
 | Método                              | Caso de uso      |
 |-------------------------------------|------------------|
-| `crear_contacto(datos: dict)`       | CU-01            |
-| `listar_contactos(pagina, tam)`     | CU-02            |
-| `buscar_contactos(termino: str)`    | CU-03            |
-| `obtener_contacto(id: int)`         | CU-04            |
-| `actualizar_contacto(id, cambios)`  | CU-05            |
-| `eliminar_contacto(id: int)`        | CU-06            |
+| `crear_furgoneta(datos: dict)`       | CU-01            |
+| `listar_furgoneta(pagina, tam)`     | CU-02            |
+| `buscar_furgoneta(termino: str)`    | CU-03            |
+| `obtener_furgoneta(id: int)`         | CU-04            |
+| `actualizar_furgoneta(id, cambios)`  | CU-05            |
+| `eliminar_furgoneta(id: int)`        | CU-06            |
+| `crear_entrega(datos: dict)`       | CU-07            |
+| `listar_entrega(pagina, tam)`     | CU-08           |
+| `buscar_entrega(termino: str)`    | CU-09            |
+| `obtener_entrega(id: int)`         | CU-10            |
+| `actualizar_entrega(id, cambios)`  | CU-11            |
+| `eliminar_entrega(id: int)`        | CU-12            |
+| `vincular_ambos(id: int, id: int)`        | CU-12            |
 
 ---
 ### 3.7 `db/connection.py`
@@ -146,7 +153,8 @@ Repositorio de acceso a datos. Todas las consultas usan parámetros (`%s`).
 
 | Método                              | SQL generado                         |
 |-------------------------------------|--------------------------------------|
-| `insertar(contacto)`                | `INSERT INTO contactos ...`          |
+| `insertar(furgoneta)`                | `INSERT INTO furgonetas ...`          |
+| `insertar(entrega)`                | `INSERT INTO entregas ...`          |
 | `obtener_por_id(id)`               | `SELECT ... WHERE id=%s AND deleted_at IS NULL` |
 | `listar(offset, limit)`            | `SELECT ... WHERE deleted_at IS NULL LIMIT ...` |
 | `buscar(termino)`                  | `SELECT ... WHERE (nombre LIKE %s OR ...)` |
